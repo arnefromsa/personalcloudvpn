@@ -13,7 +13,7 @@ variable "admin_username" {
 variable "admin_password" {
   type        = string
   description = "Admin Password"
-  default = "ljkadf121@naskjdfnasndf"
+  default = "mysuperpassword"
 }
 
 variable "vm_name" {
