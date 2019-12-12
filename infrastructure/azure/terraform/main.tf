@@ -4,7 +4,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "openvpn-private" {
-  name     = "openvpn-private"
+  name     = "${var.resource_group}"
   location = "${var.primary_region}"
 }
 
@@ -49,7 +49,7 @@ resource "azurerm_public_ip" "openvpn-publicip" {
   location            = "${var.primary_region}"
   resource_group_name = "${azurerm_resource_group.openvpn-private.name}"
   allocation_method   = "Dynamic"
-  domain_name_label = "${var.dns_primary_region}"
+  domain_name_label = "${var.region_dns}"
 }
 
 resource "azurerm_network_security_group" "openvpn-nsg" {
@@ -110,11 +110,18 @@ resource "azurerm_storage_account" "openvpndiag" {
 
 
 resource "azurerm_virtual_machine" "main" {
-  name                  = "openvpn-vm"
+  name                  = "${var.vm_name}"
   location              = "${azurerm_resource_group.openvpn-private.location}"
   resource_group_name   = "${azurerm_resource_group.openvpn-private.name}"
   network_interface_ids = ["${azurerm_network_interface.openvpn-nic.id}"]
-  vm_size               = "Standard_B1s" 
+  vm_size               = "${var.virtual_machine_size}" 
+
+  plan {
+    name = "netgate-pfsense-azure-243"
+    publisher = "netgate"
+    product = "netgate-pfsense-azure-fw-vpn-router"
+  }
+
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
   # delete_os_disk_on_termination = true
@@ -124,22 +131,23 @@ resource "azurerm_virtual_machine" "main" {
   # delete_data_disks_on_termination = true
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+    publisher = "${var.image_publisher}"
+    offer     = "${var.image_offer}"
+    sku       = "${var.image_sku}"
+    version   = "${var.image_version}"
   }
   storage_os_disk {
-    name              = "myosdisk1"
+    name              = "pfsenseos-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
+    managed_disk_type = "${var.os_disk_type}"
   }
   os_profile {
-    computer_name  = "openvpn-vm"
-    admin_username = "openvpn-machine"
-    admin_password = "KsarAzddh8To1KGv1z"
+    computer_name  = "${var.vm_name}"
+    admin_username = "${var.admin_username}"
+    admin_password = "${var.admin_password}"
   }
+
   os_profile_linux_config {
     disable_password_authentication = false
   }
