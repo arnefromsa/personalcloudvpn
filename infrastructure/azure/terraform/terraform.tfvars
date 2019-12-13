@@ -1,6 +1,6 @@
 # Virtual Machine and Software Credentials
 admin_username = "pfsense-user"
-admin_password = "mysuperpassword"
+admin_password = "ljkadf121@nask4312jdfnasndf"
 
 # Resource Infrastructure Information
 resource_group = "pfsense-rg-test"
