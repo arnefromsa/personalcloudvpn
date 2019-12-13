@@ -1,19 +1,23 @@
+
+variable "resource_prefix" {
+  type = string
+  description = "Resources not specifically specified, will be prefixed with this"
+  default = "pfsense-"
+}
 variable "resource_group" {
   type        = string
   description = "Resource group to deploy resources in"
-  default = "pfsense-test"  
+  default = "pfsense-rg"  
 }
 
 variable "admin_username" {
   type        = string
   description = "Admin Username"
-  default = "pfsense-user"
 }
 
 variable "admin_password" {
   type        = string
   description = "Admin Password"
-  default = "mysuperpassword"
 }
 
 variable "vm_name" {
@@ -30,8 +34,8 @@ variable "primary_region" {
 
 variable "region_dns" {
   type        = string
-  description = "DNS name"
-  default = "justpulsingaround"
+  description = "DNS name, will be a subdomain of <region>.cloudapp.azure.com"
+  default = "justavpn"
 }
 
 variable "virtual_machine_size" {
@@ -46,6 +50,8 @@ variable "os_disk_type" {
   default = "Standard_LRS"
 }
 
+
+## BEGIN Image Information # should probably not change
 
 
 # This should not change
