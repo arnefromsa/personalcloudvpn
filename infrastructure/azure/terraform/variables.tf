@@ -2,7 +2,7 @@
 variable "resource_prefix" {
   type = string
   description = "Resources not specifically specified, will be prefixed with this"
-  default = "pfsense-"
+  default = "pfsense"
 }
 variable "resource_group" {
   type        = string

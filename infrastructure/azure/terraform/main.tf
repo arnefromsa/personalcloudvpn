@@ -3,64 +3,64 @@ provider "azurerm" {
   version = "=1.36.0"
 }
 
-resource "azurerm_resource_group" "openvpn-private" {
+resource "azurerm_resource_group" "pfsense-private" {
   name     = "${var.resource_group}"
   location = "${var.primary_region}"
 }
 
-resource "azurerm_virtual_network" "openvpn-vnet" {
+resource "azurerm_virtual_network" "pfsense-vnet" {
   name                = "${var.resource_prefix}-vnet"
-  location            = "${azurerm_resource_group.openvpn-private.location}"
-  resource_group_name = "${azurerm_resource_group.openvpn-private.name}"
+  location            = "${azurerm_resource_group.pfsense-private.location}"
+  resource_group_name = "${azurerm_resource_group.pfsense-private.name}"
   address_space       = ["10.0.0.0/16"]
 
 }
 
-resource "azurerm_subnet" "openvpn-subnet" {
-  name                 = "openvpn-subnet"
-  resource_group_name  = "${azurerm_resource_group.openvpn-private.name}"
-  virtual_network_name = "${azurerm_virtual_network.openvpn-vnet.name}"
+resource "azurerm_subnet" "pfsense-subnet" {
+  name                 = "${var.resource_prefix}-subnet"
+  resource_group_name  = "${azurerm_resource_group.pfsense-private.name}"
+  virtual_network_name = "${azurerm_virtual_network.pfsense-vnet.name}"
   address_prefix       = "10.0.0.0/24"
 }
 
-resource "azurerm_subnet" "openvpn-subnet-2" {
-  name                 = "openvpn-subnet-2"
-  resource_group_name  = "${azurerm_resource_group.openvpn-private.name}"
-  virtual_network_name = "${azurerm_virtual_network.openvpn-vnet.name}"
+resource "azurerm_subnet" "pfsense-subnet-2" {
+  name                 = "${var.resource_prefix}-subnet-2"
+  resource_group_name  = "${azurerm_resource_group.pfsense-private.name}"
+  virtual_network_name = "${azurerm_virtual_network.pfsense-vnet.name}"
   address_prefix       = "10.0.1.0/24"
 }
 
-resource "azurerm_network_interface" "openvpn-nic" {
-  name                = "openvpn-nic"
-  location            = "${azurerm_resource_group.openvpn-private.location}"
-  resource_group_name = "${azurerm_resource_group.openvpn-private.name}"
+resource "azurerm_network_interface" "pfsense-nic" {
+  name                = "${var.resource_prefix}-nic"
+  location            = "${azurerm_resource_group.pfsense-private.location}"
+  resource_group_name = "${azurerm_resource_group.pfsense-private.name}"
 
   ip_configuration {
-    name                          = "openvpn_configuration"
-    subnet_id                     = "${azurerm_subnet.openvpn-subnet.id}"
+    name                          = "${var.resource_prefix}_configuration"
+    subnet_id                     = "${azurerm_subnet.pfsense-subnet.id}"
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = "${azurerm_public_ip.openvpn-publicip.id}"
+    public_ip_address_id = "${azurerm_public_ip.pfsense-publicip.id}"
   }
 
 }
 
-resource "azurerm_public_ip" "openvpn-publicip" {
-  name                = "openvpn-publicip"
+resource "azurerm_public_ip" "pfsense-publicip" {
+  name                = "${var.resource_prefix}-publicip"
   location            = "${var.primary_region}"
-  resource_group_name = "${azurerm_resource_group.openvpn-private.name}"
+  resource_group_name = "${azurerm_resource_group.pfsense-private.name}"
   allocation_method   = "Dynamic"
   domain_name_label = "${var.region_dns}"
 }
 
-resource "azurerm_network_security_group" "openvpn-nsg" {
-  name                = "openvpn-nsg"
-  location            = "${azurerm_resource_group.openvpn-private.location}"
-  resource_group_name = "${azurerm_resource_group.openvpn-private.name}"
+resource "azurerm_network_security_group" "pfsense-nsg" {
+  name                = "${var.resource_prefix}-nsg"
+  location            = "${azurerm_resource_group.pfsense-private.location}"
+  resource_group_name = "${azurerm_resource_group.pfsense-private.name}"
 
 }
 
-resource "azurerm_network_security_rule" "openvpn-nsr-ssh" {
-  name                        = "openvpn-nsr-ssh"
+resource "azurerm_network_security_rule" "pfsense-nsr-ssh" {
+  name                        = "${var.resource_prefix}-nsr-ssh"
   priority                    = 1000
   direction                   = "Inbound"
   access                      = "Allow"
@@ -69,12 +69,12 @@ resource "azurerm_network_security_rule" "openvpn-nsr-ssh" {
   destination_port_range      = "22"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${azurerm_resource_group.openvpn-private.name}"
-  network_security_group_name = "${azurerm_network_security_group.openvpn-nsg.name}"
+  resource_group_name         = "${azurerm_resource_group.pfsense-private.name}"
+  network_security_group_name = "${azurerm_network_security_group.pfsense-nsg.name}"
 }
 
-resource "azurerm_network_security_rule" "openvpn-nsr-openvpn" {
-  name                        = "openvpn-nsr-openvpn"
+resource "azurerm_network_security_rule" "pfsense-nsr-openvpn" {
+  name                        = "${var.resource_prefix}-nsr-openvpn"
   priority                    = 1100
   direction                   = "Inbound"
   access                      = "Allow"
@@ -83,11 +83,11 @@ resource "azurerm_network_security_rule" "openvpn-nsr-openvpn" {
   destination_port_range      = "1194"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${azurerm_resource_group.openvpn-private.name}"
-  network_security_group_name = "${azurerm_network_security_group.openvpn-nsg.name}"
+  resource_group_name         = "${azurerm_resource_group.pfsense-private.name}"
+  network_security_group_name = "${azurerm_network_security_group.pfsense-nsg.name}"
 }
-resource "azurerm_network_security_rule" "openvpn-nsr-https" {
-  name                        = "openvpn-nsr-https"
+resource "azurerm_network_security_rule" "pfsense-nsr-https" {
+  name                        = "${var.resource_prefix}-nsr-https"
   priority                    = 1200
   direction                   = "Inbound"
   access                      = "Allow"
@@ -96,14 +96,14 @@ resource "azurerm_network_security_rule" "openvpn-nsr-https" {
   destination_port_range      = "443"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${azurerm_resource_group.openvpn-private.name}"
-  network_security_group_name = "${azurerm_network_security_group.openvpn-nsg.name}"
+  resource_group_name         = "${azurerm_resource_group.pfsense-private.name}"
+  network_security_group_name = "${azurerm_network_security_group.pfsense-nsg.name}"
 }
 
-resource "azurerm_storage_account" "openvpndiag" {
-  name                     = "openvpndiag19029182"
-  resource_group_name      = "${azurerm_resource_group.openvpn-private.name}"
-  location                 = "${azurerm_resource_group.openvpn-private.location}"
+resource "azurerm_storage_account" "pfsensediag" {
+  name                     = "${var.resource_prefix}diag19029182"
+  resource_group_name      = "${azurerm_resource_group.pfsense-private.name}"
+  location                 = "${azurerm_resource_group.pfsense-private.location}"
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
@@ -111,9 +111,9 @@ resource "azurerm_storage_account" "openvpndiag" {
 
 resource "azurerm_virtual_machine" "main" {
   name                  = "${var.vm_name}"
-  location              = "${azurerm_resource_group.openvpn-private.location}"
-  resource_group_name   = "${azurerm_resource_group.openvpn-private.name}"
-  network_interface_ids = ["${azurerm_network_interface.openvpn-nic.id}"]
+  location              = "${azurerm_resource_group.pfsense-private.location}"
+  resource_group_name   = "${azurerm_resource_group.pfsense-private.name}"
+  network_interface_ids = ["${azurerm_network_interface.pfsense-nic.id}"]
   vm_size               = "${var.virtual_machine_size}" 
 
   plan {
@@ -137,7 +137,7 @@ resource "azurerm_virtual_machine" "main" {
     version   = "${var.image_version}"
   }
   storage_os_disk {
-    name              = "pfsenseos-disk"
+    name              = "${var.resource_prefix}-os-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "${var.os_disk_type}"
