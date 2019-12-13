@@ -1,3 +1,8 @@
+variable "resource_prefix" {
+  type = string
+  description = "Resources not specifically specified, will be prefixed with this"
+  default = "pfsense-"
+}
 variable "resource_group" {
   type        = string
   description = "Resource group to deploy resources in"
@@ -44,7 +49,7 @@ variable "os_disk_type" {
   default = "Standard_LRS"
 }
 
-## Image Information # should probably not change
+## BEGOMmage Information # should probably not change
 variable "image_publisher" {
   type = string
   default = "netgate"
@@ -64,4 +69,4 @@ variable "image_version" {
   type = string
   default = "2.4.431"
 }
-## Image Information # should probably not change
+## END - Image Information # should probably not change
