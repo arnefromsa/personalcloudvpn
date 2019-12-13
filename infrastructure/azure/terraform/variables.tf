@@ -1,3 +1,4 @@
+
 variable "resource_prefix" {
   type = string
   description = "Resources not specifically specified, will be prefixed with this"
@@ -49,7 +50,11 @@ variable "os_disk_type" {
   default = "Standard_LRS"
 }
 
-## BEGOMmage Information # should probably not change
+
+## BEGIN Image Information # should probably not change
+
+
+# This should not change
 variable "image_publisher" {
   type = string
   default = "netgate"
@@ -69,4 +74,3 @@ variable "image_version" {
   type = string
   default = "2.4.431"
 }
-## END - Image Information # should probably not change
