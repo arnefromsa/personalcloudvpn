@@ -34,6 +34,7 @@ resource "azurerm_network_interface" "pfsense-nic" {
   name                = "${var.resource_prefix}-nic"
   location            = "${azurerm_resource_group.pfsense-private.location}"
   resource_group_name = "${azurerm_resource_group.pfsense-private.name}"
+  network_security_group_id = "${azurerm_network_security_group.pfsense-nsg}"
 
   ip_configuration {
     name                          = "${var.resource_prefix}_configuration"
@@ -59,19 +60,19 @@ resource "azurerm_network_security_group" "pfsense-nsg" {
 
 }
 
-resource "azurerm_network_security_rule" "pfsense-nsr-ssh" {
-  name                        = "${var.resource_prefix}-nsr-ssh"
-  priority                    = 1000
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "22"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = "${azurerm_resource_group.pfsense-private.name}"
-  network_security_group_name = "${azurerm_network_security_group.pfsense-nsg.name}"
-}
+# resource "azurerm_network_security_rule" "pfsense-nsr-ssh" {
+#   name                        = "${var.resource_prefix}-nsr-ssh"
+#   priority                    = 1000
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "Tcp"
+#   source_port_range           = "*"
+#   destination_port_range      = "22"
+#   source_address_prefix       = "*"
+#   destination_address_prefix  = "*"
+#   resource_group_name         = "${azurerm_resource_group.pfsense-private.name}"
+#   network_security_group_name = "${azurerm_network_security_group.pfsense-nsg.name}"
+# }
 
 resource "azurerm_network_security_rule" "pfsense-nsr-openvpn" {
   name                        = "${var.resource_prefix}-nsr-openvpn"
