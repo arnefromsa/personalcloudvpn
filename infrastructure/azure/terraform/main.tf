@@ -12,7 +12,7 @@ resource "azurerm_virtual_network" "pfsense-vnet" {
   name                = "${var.resource_prefix}-vnet"
   location            = "${azurerm_resource_group.pfsense-private.location}"
   resource_group_name = "${azurerm_resource_group.pfsense-private.name}"
-  address_space       = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/23"]
 
 }
 
@@ -20,21 +20,30 @@ resource "azurerm_subnet" "pfsense-subnet" {
   name                 = "${var.resource_prefix}-subnet"
   resource_group_name  = "${azurerm_resource_group.pfsense-private.name}"
   virtual_network_name = "${azurerm_virtual_network.pfsense-vnet.name}"
-  address_prefix       = "10.0.0.0/24"
+  address_prefix       = "10.0.0.0/26"
 }
 
 resource "azurerm_subnet" "pfsense-subnet-2" {
   name                 = "${var.resource_prefix}-subnet-2"
   resource_group_name  = "${azurerm_resource_group.pfsense-private.name}"
   virtual_network_name = "${azurerm_virtual_network.pfsense-vnet.name}"
-  address_prefix       = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/26"
+}
+
+resource "azurerm_subnet_network_security_group_association" "pfsense-subnet-ass" {
+  subnet_id                 = "${azurerm_subnet.pfsense-subnet.id}"
+  network_security_group_id = "${azurerm_network_security_group.pfsense-nsg.id}"
+}
+resource "azurerm_subnet_network_security_group_association" "pfsense-subnet2-ass" {
+  subnet_id                 = "${azurerm_subnet.pfsense-subnet-2.id}"
+  network_security_group_id = "${azurerm_network_security_group.pfsense-nsg.id}"
 }
 
 resource "azurerm_network_interface" "pfsense-nic" {
   name                = "${var.resource_prefix}-nic"
   location            = "${azurerm_resource_group.pfsense-private.location}"
   resource_group_name = "${azurerm_resource_group.pfsense-private.name}"
-  network_security_group_id = "${azurerm_network_security_group.pfsense-nsg}"
+  network_security_group_id = "${azurerm_network_security_group.pfsense-nsg.id}"
 
   ip_configuration {
     name                          = "${var.resource_prefix}_configuration"

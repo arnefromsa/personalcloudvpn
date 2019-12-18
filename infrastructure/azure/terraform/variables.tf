@@ -28,8 +28,8 @@ variable "vm_name" {
 
 variable "primary_region" {
   type        = string
-  description = "Primary region the implementation should be applied to"
-  default = "southafricanorth" ##southafricanorth
+  description = "Primary region the implementation should be applied to.(centralus,eastasia,southeastasia,eastus,eastus2,westus,westus2,northcentralus,southcentralus,westcentralus,northeurope,westeurope,japaneast,japanwest,brazilsouth,australiasoutheast,australiaeast,westindia,southindia,centralindia,canadacentral,canadaeast,uksouth,ukwest,koreacentral,koreasouth,francecentral,southafricanorth,uaenorth,australiacentral)"
+  default = "northeurope" 
 }
 
 variable "region_dns" {
