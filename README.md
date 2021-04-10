@@ -9,7 +9,7 @@ The main premise behind this is to be :
 - Be reliable
 
 # Infrastructure Architecture
-This solution utilises Terraform to build the Azure infrastructure and spins up a N[Netgate pfSense Firewall/VPN/Router image](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/netgate.netgate-pfsense-azure-fw-vpn-router) in an Azure resource group.
+This solution utilises Terraform to build the Azure infrastructure and spins up a [Netgate pfSense Firewall/VPN/Router image](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/netgate.netgate-pfsense-azure-fw-vpn-router) in an Azure resource group.
 
 ## Netgate pfSense Firewall/VPN/Router image
 pfSense runs on Ubuntu and very lightweight instance.  The software licensing is FREE to use if you utilise the A0 VM size.  An A0 VM should more than sufficient for personal use, either for home or personal use.
